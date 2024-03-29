@@ -70,7 +70,7 @@ function StatusMaintenance() {
                 variant="subtitle1"
                 color="text.primary"
               >
-                + 00 1 888 555 444
+                +91 7841963856
               </Typography>
             </Box>
             <Box>

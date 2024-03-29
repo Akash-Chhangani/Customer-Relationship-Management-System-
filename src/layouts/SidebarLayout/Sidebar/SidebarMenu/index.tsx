@@ -109,7 +109,7 @@ const SubMenuWrapper = styled(Box)(
 
           &.active,
           &:hover {
-            background-color: ${alpha(theme.colors.alpha.trueWhite[100], 0.06)};
+            background-color: ${alpha(theme.colors.alpha.trueWhite[100], 0.5)};
             color: ${theme.colors.alpha.trueWhite[100]};
 
             .MuiButton-startIcon,
@@ -191,7 +191,7 @@ function SidebarMenu() {
                   disableRipple
                   component={RouterLink}
                   onClick={closeSidebar}
-                  to="/overview"
+                  to="/status/500"
                   startIcon={<DesignServicesTwoToneIcon />}
                 >
                   Overview
@@ -218,7 +218,7 @@ function SidebarMenu() {
                   to="/dashboards/crypto"
                   startIcon={<BrightnessLowTwoToneIcon />}
                 >
-                  CLIENTS
+                  Clients
                 </Button>
               </ListItem>
               <ListItem component="div">
@@ -237,7 +237,7 @@ function SidebarMenu() {
                   disableRipple
                   component={RouterLink}
                   onClick={closeSidebar}
-                  to="/dashboards/Prospects"
+                  to="/status/coming-soon"
                   startIcon={<MmsTwoToneIcon />}
                 >
                   Prospects
