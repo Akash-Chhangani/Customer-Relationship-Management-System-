@@ -23,6 +23,8 @@ const Overview = Loader(lazy(() => import('./content/overview/index')));
 
 const Crypto = Loader(lazy(() => import('src/content/dashboards/client')));
 
+const Notes = Loader(lazy(() => import('src/content/dashboards/notes')));
+
 // Applications
 
 const Messenger = Loader(
@@ -136,6 +138,10 @@ const routes = [
       {
         path: 'crypto',
         element: <Crypto />
+      },
+      {
+        path: 'notes',
+        element: <Notes />
       },
       {
         path: 'messenger',
