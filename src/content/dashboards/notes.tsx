@@ -23,7 +23,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import Footer from 'src/components/Footer';
-import DataNotFound from './dataNotFound.jpg';
+import DataNotFound from 'src/content/pages/Status/DataNotFound';
 
 const Notes = () => {
   const [heading, setHeading] = useState('');
@@ -214,7 +214,14 @@ const Notes = () => {
             variant="contained"
             color="success"
             sx={{ margin: '0.6rem' }}
-            onClick={editingNote ? handleSaveEdit : handleCreateNote}
+            onClick={() => {
+              if (editingNote) {
+                handleSaveEdit();
+              } else {
+                handleCreateNote();
+              }
+              handleClose(); // Close the dialog after saving
+            }}
           >
             {editingNote ? 'Save' : 'Submit'}
           </Button>
@@ -284,21 +291,7 @@ const Notes = () => {
             ))}
           </Grid>
         ) : (
-          <Typography variant="h5" align="center" sx={{ marginTop: '2rem' }}>
-            <div>
-              <img
-                style={{
-                  width: '70vh',
-                  height: '60vh',
-                  opacity: '0.5',
-                  borderRadius: '2rem'
-                }}
-                src={DataNotFound}
-                alt="dataNotFound"
-              />
-            </div>
-            No data found!
-          </Typography>
+          <DataNotFound />
         )}
       </Container>
 

@@ -1,11 +1,9 @@
-import { useEffect, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import {
   TextField,
   Button,
   Typography,
   Grid,
-  Card,
-  Box,
   Table,
   TableBody,
   TableCell,
@@ -21,33 +19,20 @@ import {
   Container,
   IconButton
 } from '@mui/material';
-import './Crypto/client.css';
 import BusinessIcon from '@mui/icons-material/Business';
 import AddTwoToneIcon from '@mui/icons-material/AddTwoTone';
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
 import { Helmet } from 'react-helmet-async';
 import Footer from 'src/components/Footer';
-import DataNotFound from './dataNotFound.jpg';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import DataNotFound from 'src/content/pages/Status/DataNotFound';
 
-export default function client() {
+const Client = () => {
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    const storedData = localStorage.getItem('submittedData');
-    if (storedData) {
-      setSubmittedData(JSON.parse(storedData));
-    }
-  }, []);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
+  const [submitClientData, setSubmitClientData] = useState([]);
+  const [editingClientTable, setEditingClientTable] = useState(null);
+  const [editIconColor, setEditIconColor] = useState('green');
   const [formData, setFormData] = useState({
     companyName: '',
     address: '',
@@ -59,24 +44,31 @@ export default function client() {
     country: ''
   });
 
-  const [submittedData, setSubmittedData] = useState([]);
+  const handleEditTable = (
+    formData: SetStateAction<{
+      companyName: string;
+      address: string;
+      officeId: string;
+      email: string;
+      phoneNo: string;
+      city: string;
+      state: string;
+      country: string;
+    }>
+  ) => {
+    setFormData(formData);
+    setOpen(true);
+    setEditingClientTable(formData);
 
-  const handleInputChange = (e: { target: { name: any; value: any } }) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value
-    }));
+    const editedIndex = submitClientData.findIndex((item) => item === formData);
+    if (editedIndex !== -1) {
+      setEditIconColor('black');
+    } else {
+      setEditIconColor('green');
+    }
   };
 
-  const handleDelete = (index) => {
-    const newData = submittedData.filter((_, i) => i !== index);
-    setSubmittedData(newData);
-    localStorage.setItem('submittedData', JSON.stringify(newData));
-  };
-
-  const handleSubmit = () => {
-    // Check if any field is empty
+  const handleSaveEdit = () => {
     const emptyFields = Object.values(formData).filter(
       (value) => value.trim() === ''
     );
@@ -84,9 +76,12 @@ export default function client() {
       alert('Please fill in all fields.');
     } else {
       const newData = { ...formData };
-      // Update submittedData state
-      setSubmittedData((prevData) => [...prevData, newData]);
-      // Reset form data
+      const editingIndex = submitClientData.findIndex(
+        (item) => item === editingClientTable
+      );
+      const updatedSubmitData = [...submitClientData];
+      updatedSubmitData[editingIndex] = newData;
+      setSubmitClientData(updatedSubmitData);
       setFormData({
         companyName: '',
         address: '',
@@ -97,18 +92,77 @@ export default function client() {
         state: '',
         country: ''
       });
-
-      // Save submittedData to local storage
       localStorage.setItem(
-        'submittedData',
-        JSON.stringify([...submittedData, newData])
+        'submitClientData',
+        JSON.stringify(updatedSubmitData)
+      );
+      setOpen(false);
+      setEditIconColor('black');
+    }
+  };
+
+  useEffect(() => {
+    const storedData = localStorage.getItem('submitClientData');
+    if (storedData) {
+      setSubmitClientData(JSON.parse(storedData));
+    }
+  }, []);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+    setEditingClientTable(null);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleCancelEdit = () => {
+    setOpen(false);
+  };
+
+  const handleInputChange = (e: { target: { name: any; value: any } }) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
+
+  const handleDelete = (index: number) => {
+    const newData = submitClientData.filter((_, i) => i !== index);
+    setSubmitClientData(newData);
+    localStorage.setItem('submitClientData', JSON.stringify(newData));
+  };
+
+  const handleSubmit = () => {
+    const emptyFields = Object.values(formData).filter(
+      (value) => value.trim() === ''
+    );
+    if (emptyFields.length > 0) {
+      alert('Please fill in all fields.');
+    } else {
+      const newData = { ...formData };
+      setSubmitClientData((prevData) => [...prevData, newData]);
+      setFormData({
+        companyName: '',
+        address: '',
+        officeId: '',
+        email: '',
+        phoneNo: '',
+        city: '',
+        state: '',
+        country: ''
+      });
+      localStorage.setItem(
+        'submitClientData',
+        JSON.stringify([...submitClientData, newData])
       );
     }
   };
 
   const user = {
-    name: 'Catherine Pike',
-    avatar: '/static/images/avatars/1.jpg'
+    name: 'Catherine Pike'
   };
 
   return (
@@ -172,114 +226,118 @@ export default function client() {
                 color: 'green',
                 marginRight: '5px'
               }}
-            />{' '}
-            Create Company
+            />
+            {editingClientTable ? 'Edit Company' : ' Create Company'}
           </Typography>
         </DialogTitle>
 
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            <Card
-              sx={{
-                margin: '1rem',
-                padding: '1rem',
-                borderRadius: '2rem'
-              }}
-            >
-              <Grid
-                container
-                rowSpacing={1}
-                columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-              >
-                <Grid item xs={18}>
-                  <Box
-                    component="form"
-                    sx={{
-                      '& > :not(style)': { m: 1, width: '13rem' }
-                    }}
-                    // noValidate
-                    // autoComplete="off"
-                  >
-                    <TextField
-                      id="companyName"
-                      name="companyName"
-                      label="Company Name"
-                      variant="outlined"
-                      required
-                      value={formData.companyName}
-                      onChange={handleInputChange}
-                    />
-                    <TextField
-                      id="address"
-                      name="address"
-                      label="Address"
-                      variant="outlined"
-                      required
-                      value={formData.address}
-                      onChange={handleInputChange}
-                    />
-
-                    <TextField
-                      id="officeId"
-                      name="officeId"
-                      label="Office Id"
-                      variant="outlined"
-                      required
-                      value={formData.officeId}
-                      onChange={handleInputChange}
-                    />
-
-                    <TextField
-                      id="email"
-                      name="email"
-                      label="Email"
-                      variant="outlined"
-                      required
-                      value={formData.email}
-                      onChange={handleInputChange}
-                    />
-
-                    <TextField
-                      id="phoneNo"
-                      name="phoneNo"
-                      label="Phone Number"
-                      variant="outlined"
-                      value={formData.phoneNo}
-                      onChange={handleInputChange}
-                    />
-
-                    <TextField
-                      id="city"
-                      name="city"
-                      label="City "
-                      variant="outlined"
-                      required
-                      value={formData.city}
-                      onChange={handleInputChange}
-                    />
-                    <TextField
-                      id="state"
-                      name="state"
-                      label="State"
-                      variant="outlined"
-                      required
-                      value={formData.state}
-                      onChange={handleInputChange}
-                    />
-
-                    <TextField
-                      id="country"
-                      name="country"
-                      label="Country"
-                      variant="outlined"
-                      required
-                      value={formData.country}
-                      onChange={handleInputChange}
-                    />
-                  </Box>
-                </Grid>
+            <Grid container spacing={2} justifyContent="center">
+              <Grid item xs={12}>
+                <TextField
+                  sx={{ marginTop: '1rem' }}
+                  id="companyName"
+                  name="companyName"
+                  label="Company Name"
+                  variant="outlined"
+                  required
+                  fullWidth
+                  value={formData.companyName}
+                  onChange={handleInputChange}
+                />
               </Grid>
-            </Card>
+
+              <Grid item xs={12}>
+                <TextField
+                  id="address"
+                  name="address"
+                  label="Address"
+                  variant="outlined"
+                  required
+                  fullWidth
+                  value={formData.address}
+                  onChange={handleInputChange}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  id="officeId"
+                  name="officeId"
+                  label="Office Id"
+                  variant="outlined"
+                  required
+                  fullWidth
+                  value={formData.officeId}
+                  onChange={handleInputChange}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  id="email"
+                  name="email"
+                  label="Email"
+                  variant="outlined"
+                  required
+                  fullWidth
+                  value={formData.email}
+                  onChange={handleInputChange}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  id="phoneNo"
+                  name="phoneNo"
+                  label="Phone Number"
+                  variant="outlined"
+                  fullWidth
+                  value={formData.phoneNo}
+                  onChange={handleInputChange}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  id="city"
+                  name="city"
+                  label="City "
+                  variant="outlined"
+                  required
+                  fullWidth
+                  value={formData.city}
+                  onChange={handleInputChange}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  id="state"
+                  name="state"
+                  label="State"
+                  variant="outlined"
+                  required
+                  fullWidth
+                  value={formData.state}
+                  onChange={handleInputChange}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  id="country"
+                  name="country"
+                  label="Country"
+                  variant="outlined"
+                  required
+                  fullWidth
+                  value={formData.country}
+                  onChange={handleInputChange}
+                />
+              </Grid>
+            </Grid>
           </DialogContentText>
         </DialogContent>
 
@@ -288,22 +346,29 @@ export default function client() {
             variant="contained"
             color="success"
             sx={{ margin: '0.6rem' }}
-            onClick={handleSubmit}
+            onClick={() => {
+              if (editingClientTable) {
+                handleSaveEdit();
+              } else {
+                handleSubmit();
+              }
+              handleClose();
+            }}
           >
-            {' Submit'}
+            {editingClientTable ? 'Save' : 'Submit'}
           </Button>
           <Button
-            onClick={handleClose}
             variant="contained"
             sx={{ margin: '1rem' }}
+            onClick={editingClientTable ? handleCancelEdit : handleClose}
           >
-            Cancel
+            {editingClientTable ? 'Cancel' : 'Cancel'}
           </Button>
         </DialogActions>
       </Dialog>
 
       <Container maxWidth="lg">
-        {submittedData.length > 0 ? (
+        {submitClientData.length > 0 ? (
           <Grid
             container
             direction="row"
@@ -312,7 +377,7 @@ export default function client() {
             spacing={3}
           >
             <Grid item xs={12}>
-              <TableContainer component={Paper} sx={{ margTop: '2rem' }}>
+              <TableContainer component={Paper}>
                 <Table>
                   <TableHead>
                     <TableRow>
@@ -329,17 +394,21 @@ export default function client() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {submittedData.map((data, index) => (
+                    {submitClientData.map((formData, index) => (
                       <TableRow key={index}>
                         <TableCell align="center">{index + 1}</TableCell>
-                        <TableCell align="center">{data.companyName}</TableCell>
-                        <TableCell align="center">{data.address}</TableCell>
-                        <TableCell align="center">{data.officeId}</TableCell>
-                        <TableCell align="center">{data.email}</TableCell>
-                        <TableCell align="center">{data.phoneNo}</TableCell>
-                        <TableCell align="center">{data.city}</TableCell>
-                        <TableCell align="center">{data.state}</TableCell>
-                        <TableCell align="center">{data.country}</TableCell>
+                        <TableCell align="center">
+                          {formData.companyName}
+                        </TableCell>
+                        <TableCell align="center">{formData.address}</TableCell>
+                        <TableCell align="center">
+                          {formData.officeId}
+                        </TableCell>
+                        <TableCell align="center">{formData.email}</TableCell>
+                        <TableCell align="center">{formData.phoneNo}</TableCell>
+                        <TableCell align="center">{formData.city}</TableCell>
+                        <TableCell align="center">{formData.state}</TableCell>
+                        <TableCell align="center">{formData.country}</TableCell>
                         <TableCell align="center">
                           <IconButton
                             aria-label="delete"
@@ -347,6 +416,9 @@ export default function client() {
                             onClick={() => handleDelete(index)}
                           >
                             <DeleteIcon />
+                          </IconButton>
+                          <IconButton onClick={() => handleEditTable(formData)}>
+                            <EditIcon sx={{ color: editIconColor }} />
                           </IconButton>
                         </TableCell>
                       </TableRow>
@@ -357,25 +429,13 @@ export default function client() {
             </Grid>
           </Grid>
         ) : (
-          <Typography variant="h5" align="center" sx={{ marginTop: '2rem' }}>
-            <div>
-              <img
-                style={{
-                  width: '70vh',
-                  height: '60vh',
-                  opacity: '0.5',
-                  borderRadius: '2rem'
-                }}
-                src={DataNotFound}
-                alt="dataNotFound"
-              />
-            </div>
-            No data found!
-          </Typography>
+          <DataNotFound />
         )}
       </Container>
 
       <Footer />
     </>
   );
-}
+};
+
+export default Client;

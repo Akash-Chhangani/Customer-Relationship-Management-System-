@@ -12,7 +12,7 @@ import WatchList from './WatchList';
 function DashboardCrypto() {
   return (
     <>
-      {/* <Helmet>
+      <Helmet>
         <title> Dashboard</title>
       </Helmet>
       <PageTitleWrapper>
@@ -40,7 +40,7 @@ function DashboardCrypto() {
           </Grid>
         </Grid>
       </Container>
-      <Footer /> */}
+      <Footer />
     </>
   );
 }

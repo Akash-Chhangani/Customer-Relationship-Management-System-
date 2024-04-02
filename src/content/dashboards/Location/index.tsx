@@ -25,7 +25,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import Footer from 'src/components/Footer';
-import DataNotFound from 'src/content/dashboards/dataNotFound.jpg';
+import DataNotFound from 'src/content/pages/Status/DataNotFound';
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
 
 const Index = () => {
@@ -318,21 +318,7 @@ const Index = () => {
             ))}
           </Grid>
         ) : (
-          <Typography variant="h5" align="center" sx={{ marginTop: '2rem' }}>
-            <div>
-              <img
-                style={{
-                  width: '70vh',
-                  height: '60vh',
-                  opacity: '0.5',
-                  borderRadius: '2rem'
-                }}
-                src={DataNotFound}
-                alt="dataNotFound"
-              />
-            </div>
-            No data found!
-          </Typography>
+          <DataNotFound />
         )}
       </Container>
 

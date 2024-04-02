@@ -23,14 +23,16 @@ import { Helmet } from 'react-helmet-async';
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
 import AddTwoToneIcon from '@mui/icons-material/AddTwoTone';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import DataNotFound from 'src/content/dashboards/dataNotFound.jpg';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Footer from 'src/components/Footer';
+import EditIcon from '@mui/icons-material/Edit';
+import DataNotFound from 'src/content/pages/Status/DataNotFound';
 
 const Prospects = () => {
   const [open, setOpen] = useState(false);
   const [submitData, setSubmitData] = useState([]);
-
+  const [editingTable, setEditingTable] = useState(null);
+  const [editIconColor, setEditIconColor] = useState('green');
   const [data, setData] = useState({
     name: '',
     email: '',
@@ -39,6 +41,29 @@ const Prospects = () => {
     phoneNo: '',
     status: ''
   });
+
+  const handleEditTable = (
+    data: React.SetStateAction<{
+      name: string;
+      email: string;
+      officeId: string;
+      companyId: string;
+      phoneNo: string;
+      status: string;
+    }>
+  ) => {
+    setData(data); // Set the data of the prospect to edit in the form fields
+    setOpen(true);
+    setEditingTable(data); // Set the editingTable to the data being edited
+
+    // Check if the data being edited has been previously saved
+    const editedIndex = submitData.findIndex((item) => item === data);
+    if (editedIndex !== 1) {
+      setEditIconColor('black'); // Set the color of the edit icon to black
+    } else {
+      setEditIconColor('green'); // Set the color of the edit icon to green
+    }
+  };
 
   useEffect(() => {
     // Load data from local storage when component mounts
@@ -76,13 +101,14 @@ const Prospects = () => {
       );
     }
   };
-  const handleDelete = (index) => {
+
+  const handleDelete = (index: number) => {
     const newData = submitData.filter((_, i) => i !== index);
     setSubmitData(newData);
     localStorage.setItem('submitData', JSON.stringify(newData));
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setData((prevData) => ({
       ...prevData,
@@ -92,10 +118,52 @@ const Prospects = () => {
 
   const handleClickOpen = () => {
     setOpen(true);
+    setEditingTable(null); // Reset editingNote when opening the modal for creating a new Table
   };
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleCancelEdit = () => {
+    setOpen(false);
+  };
+
+  const handleSaveEdit = () => {
+    // Check if any field is empty
+    const emptyFields = Object.values(data).filter(
+      (value) => value.trim() === ''
+    );
+    if (emptyFields.length > 0) {
+      alert('Please fill in all fields.');
+    } else {
+      const newData = { ...data };
+      // Find the index of the editingTable in submitData
+      const editingIndex = submitData.findIndex(
+        (item) => item === editingTable
+      );
+      // Replace the previous data with the edited data
+      const updatedSubmitData = [...submitData];
+      updatedSubmitData[editingIndex] = newData;
+      // Update submitData state
+      setSubmitData(updatedSubmitData);
+      // Reset form data
+      setData({
+        name: '',
+        email: '',
+        officeId: '',
+        companyId: '',
+        phoneNo: '',
+        status: ''
+      });
+      // Save submitData to local storage
+      localStorage.setItem('submitData', JSON.stringify(updatedSubmitData));
+      // Close the dialog
+      setOpen(false);
+
+      // Set the color of the edit icon to black after saving the edit
+      setEditIconColor('black');
+    }
   };
 
   const user = {
@@ -107,6 +175,7 @@ const Prospects = () => {
       <Helmet>
         <title>Notes</title>
       </Helmet>
+
       {/* For display the main contain of the page  */}
       <PageTitleWrapper>
         <Grid container justifyContent="space-between" alignItems="center">
@@ -138,6 +207,7 @@ const Prospects = () => {
           </Grid>
         </Grid>
       </PageTitleWrapper>
+
       {/* When creating new notes this appears */}
       <Dialog
         open={open}
@@ -164,8 +234,7 @@ const Prospects = () => {
                 marginRight: '5px'
               }}
             />{' '}
-            {/* {editingNote ? 'Edit Note' : 'Create Notes'} */}
-            Create Prospects
+            {editingTable ? 'Edit Prospect' : 'Create Prospect'}
           </Typography>
         </DialogTitle>
 
@@ -257,20 +326,28 @@ const Prospects = () => {
           <Button
             variant="contained"
             color="success"
-            onClick={handleSubmit}
             sx={{ margin: '0.6rem' }}
+            onClick={() => {
+              if (editingTable) {
+                handleSaveEdit();
+              } else {
+                handleSubmit();
+              }
+              handleClose(); // Close the dialog after saving
+            }}
           >
-            Submit
+            {data.name ? 'Save' : 'Submit'}
           </Button>
           <Button
-            onClick={handleClose}
             variant="contained"
             sx={{ margin: '1rem' }}
+            onClick={editingTable ? handleCancelEdit : handleClose}
           >
-            Cancel
+            {editingTable ? 'Cancel' : 'Cancel'}
           </Button>
         </DialogActions>
       </Dialog>
+
       <Container maxWidth="lg">
         {submitData.length > 0 ? (
           <Grid
@@ -281,7 +358,7 @@ const Prospects = () => {
             spacing={3}
           >
             <Grid item xs={12}>
-              <TableContainer component={Paper} sx={{ margTop: '2rem' }}>
+              <TableContainer component={Paper}>
                 <Table>
                   <TableHead>
                     <TableRow>
@@ -313,6 +390,9 @@ const Prospects = () => {
                           >
                             <DeleteIcon />
                           </IconButton>
+                          <IconButton onClick={() => handleEditTable(data)}>
+                            <EditIcon sx={{ color: editIconColor }} />
+                          </IconButton>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -322,23 +402,10 @@ const Prospects = () => {
             </Grid>
           </Grid>
         ) : (
-          <Typography variant="h5" align="center" sx={{ marginTop: '2rem' }}>
-            <div>
-              <img
-                style={{
-                  width: '70vh',
-                  height: '60vh',
-                  opacity: '0.5',
-                  borderRadius: '2rem'
-                }}
-                src={DataNotFound}
-                alt="dataNotFound"
-              />
-            </div>
-            No data found!
-          </Typography>
+          <DataNotFound />
         )}
       </Container>
+
       <Footer />
     </>
   );

@@ -129,7 +129,7 @@ function AccountBalance() {
 
   return (
     <Card>
-      {/* <Grid spacing={0} container>
+      <Grid spacing={0} container>
         <Grid item xs={12} md={6}>
           <Box p={4}>
             <Typography
@@ -327,7 +327,7 @@ function AccountBalance() {
             </Grid>
           </Box>
         </Grid>
-      </Grid> */}
+      </Grid>
     </Card>
   );
 }
