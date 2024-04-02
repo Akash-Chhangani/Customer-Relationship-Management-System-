@@ -8,6 +8,7 @@ import BaseLayout from 'src/layouts/BaseLayout';
 import SuspenseLoader from 'src/components/SuspenseLoader';
 
 import './content/overview/Hero/index';
+import Prospects from 'src/content/dashboards/Prospects';
 
 const Loader = (Component) => (props) =>
   (
@@ -24,6 +25,12 @@ const Overview = Loader(lazy(() => import('./content/overview/index')));
 const Crypto = Loader(lazy(() => import('src/content/dashboards/client')));
 
 const Notes = Loader(lazy(() => import('src/content/dashboards/notes')));
+
+const prospects = Loader(
+  lazy(() => import('src/content/dashboards/Prospects'))
+);
+
+const Location = Loader(lazy(() => import('src/content/dashboards/Location')));
 
 // Applications
 
@@ -146,6 +153,14 @@ const routes = [
       {
         path: 'messenger',
         element: <Messenger />
+      },
+      {
+        path: 'Prospects',
+        element: <Prospects />
+      },
+      {
+        path: 'Email',
+        element: <Location />
       }
     ]
   },

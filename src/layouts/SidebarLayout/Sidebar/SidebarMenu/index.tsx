@@ -17,23 +17,26 @@ import BrightnessLowTwoToneIcon from '@mui/icons-material/BrightnessLowTwoTone';
 import MmsTwoToneIcon from '@mui/icons-material/MmsTwoTone';
 import TableChartTwoToneIcon from '@mui/icons-material/TableChartTwoTone';
 import AccountCircleTwoToneIcon from '@mui/icons-material/AccountCircleTwoTone';
-// import BallotTwoToneIcon from '@mui/icons-material/BallotTwoTone';
-// import BeachAccessTwoToneIcon from '@mui/icons-material/BeachAccessTwoTone';
-// import EmojiEventsTwoToneIcon from '@mui/icons-material/EmojiEventsTwoTone';
-// import FilterVintageTwoToneIcon from '@mui/icons-material/FilterVintageTwoTone';
-// import HowToVoteTwoToneIcon from '@mui/icons-material/HowToVoteTwoTone';
-// import LocalPharmacyTwoToneIcon from '@mui/icons-material/LocalPharmacyTwoTone';
-// import RedeemTwoToneIcon from '@mui/icons-material/RedeemTwoTone';
-// import SettingsTwoToneIcon from '@mui/icons-material/SettingsTwoTone';
-// import TrafficTwoToneIcon from '@mui/icons-material/TrafficTwoTone';
-// import CheckBoxTwoToneIcon from '@mui/icons-material/CheckBoxTwoTone';
-// import ChromeReaderModeTwoToneIcon from '@mui/icons-material/ChromeReaderModeTwoTone';
-// import WorkspacePremiumTwoToneIcon from '@mui/icons-material/WorkspacePremiumTwoTone';
-// import CameraFrontTwoToneIcon from '@mui/icons-material/CameraFrontTwoTone';
+import BallotTwoToneIcon from '@mui/icons-material/BallotTwoTone';
+import BeachAccessTwoToneIcon from '@mui/icons-material/BeachAccessTwoTone';
+import EmojiEventsTwoToneIcon from '@mui/icons-material/EmojiEventsTwoTone';
+import FilterVintageTwoToneIcon from '@mui/icons-material/FilterVintageTwoTone';
+import HowToVoteTwoToneIcon from '@mui/icons-material/HowToVoteTwoTone';
+import LocalPharmacyTwoToneIcon from '@mui/icons-material/LocalPharmacyTwoTone';
+import RedeemTwoToneIcon from '@mui/icons-material/RedeemTwoTone';
+import SettingsTwoToneIcon from '@mui/icons-material/SettingsTwoTone';
+import TrafficTwoToneIcon from '@mui/icons-material/TrafficTwoTone';
+import CheckBoxTwoToneIcon from '@mui/icons-material/CheckBoxTwoTone';
+import ChromeReaderModeTwoToneIcon from '@mui/icons-material/ChromeReaderModeTwoTone';
+import WorkspacePremiumTwoToneIcon from '@mui/icons-material/WorkspacePremiumTwoTone';
+import CameraFrontTwoToneIcon from '@mui/icons-material/CameraFrontTwoTone';
 import DisplaySettingsTwoToneIcon from '@mui/icons-material/DisplaySettingsTwoTone';
 import BusinessIcon from '@mui/icons-material/Business';
 import SendIcon from '@mui/icons-material/Send';
 import DescriptionIcon from '@mui/icons-material/Description';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import EmailIcon from '@mui/icons-material/Email';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 const MenuWrapper = styled(Box)(
   ({ theme }) => `
@@ -221,7 +224,7 @@ function SidebarMenu() {
                   to="/dashboards/crypto"
                   startIcon={<BusinessIcon />}
                 >
-                  Company
+                  Companies
                 </Button>
               </ListItem>
               <ListItem component="div">
@@ -252,8 +255,8 @@ function SidebarMenu() {
                   disableRipple
                   component={RouterLink}
                   onClick={closeSidebar}
-                  to="/status/coming-soon"
-                  startIcon={<MmsTwoToneIcon />}
+                  to="/dashboards/Prospects"
+                  startIcon={<AccountCircleIcon />}
                 >
                   Prospects
                 </Button>
@@ -280,6 +283,17 @@ function SidebarMenu() {
                   startIcon={<TableChartTwoToneIcon />}
                 >
                   Transactions List
+                </Button>
+              </ListItem>
+              <ListItem component="div">
+                <Button
+                  disableRipple
+                  component={RouterLink}
+                  onClick={closeSidebar}
+                  to="/dashboards/Email"
+                  startIcon={<LocationOnIcon />}
+                >
+                  Location
                 </Button>
               </ListItem>
             </List>
@@ -330,7 +344,7 @@ function SidebarMenu() {
         >
           <SubMenuWrapper>
             <List component="div">
-              {/* <ListItem component="div">
+              <ListItem component="div">
                 <Button
                   disableRipple
                   component={RouterLink}
@@ -340,8 +354,8 @@ function SidebarMenu() {
                 >
                   Buttons
                 </Button>
-              </ListItem> */}
-              {/* <ListItem component="div">
+              </ListItem>
+              <ListItem component="div">
                 <Button
                   disableRipple
                   component={RouterLink}
@@ -351,8 +365,8 @@ function SidebarMenu() {
                 >
                   Modals
                 </Button>
-              </ListItem> */}
-              {/* <ListItem component="div">
+              </ListItem>
+              <ListItem component="div">
                 <Button
                   disableRipple
                   component={RouterLink}
@@ -362,8 +376,8 @@ function SidebarMenu() {
                 >
                   Accordions
                 </Button>
-              </ListItem> */}
-              {/* <ListItem component="div">
+              </ListItem>
+              <ListItem component="div">
                 <Button
                   disableRipple
                   component={RouterLink}
@@ -373,8 +387,8 @@ function SidebarMenu() {
                 >
                   Tabs
                 </Button>
-              </ListItem> */}
-              {/* <ListItem component="div">
+              </ListItem>
+              <ListItem component="div">
                 <Button
                   disableRipple
                   component={RouterLink}
@@ -384,8 +398,8 @@ function SidebarMenu() {
                 >
                   Badges
                 </Button>
-              </ListItem> */}
-              {/* <ListItem component="div">
+              </ListItem>
+              <ListItem component="div">
                 <Button
                   disableRipple
                   component={RouterLink}
@@ -395,8 +409,8 @@ function SidebarMenu() {
                 >
                   Tooltips
                 </Button>
-              </ListItem> */}
-              {/* <ListItem component="div">
+              </ListItem>
+              <ListItem component="div">
                 <Button
                   disableRipple
                   component={RouterLink}
@@ -406,8 +420,8 @@ function SidebarMenu() {
                 >
                   Avatars
                 </Button>
-              </ListItem> */}
-              {/* <ListItem component="div">
+              </ListItem>
+              <ListItem component="div">
                 <Button
                   disableRipple
                   component={RouterLink}
@@ -417,8 +431,8 @@ function SidebarMenu() {
                 >
                   Cards
                 </Button>
-              </ListItem> */}
-              {/* <ListItem component="div">
+              </ListItem>
+              <ListItem component="div">
                 <Button
                   disableRipple
                   component={RouterLink}
@@ -428,7 +442,7 @@ function SidebarMenu() {
                 >
                   Forms
                 </Button>
-              </ListItem> */}
+              </ListItem>
             </List>
           </SubMenuWrapper>
         </List>
@@ -436,13 +450,13 @@ function SidebarMenu() {
           component="div"
           subheader={
             <ListSubheader component="div" disableSticky>
-              {/* Extra Pages */}
+              Extra Pages
             </ListSubheader>
           }
         >
           <SubMenuWrapper>
             <List component="div">
-              {/* <ListItem component="div">
+              <ListItem component="div">
                 <Button
                   disableRipple
                   component={RouterLink}
@@ -452,8 +466,8 @@ function SidebarMenu() {
                 >
                   Error 404
                 </Button>
-              </ListItem> */}
-              {/* <ListItem component="div">
+              </ListItem>
+              <ListItem component="div">
                 <Button
                   disableRipple
                   component={RouterLink}
@@ -463,8 +477,8 @@ function SidebarMenu() {
                 >
                   Error 500
                 </Button>
-              </ListItem> */}
-              {/* <ListItem component="div">
+              </ListItem>
+              <ListItem component="div">
                 <Button
                   disableRipple
                   component={RouterLink}
@@ -474,8 +488,8 @@ function SidebarMenu() {
                 >
                   Coming Soon
                 </Button>
-              </ListItem> */}
-              {/* <ListItem component="div">
+              </ListItem>
+              <ListItem component="div">
                 <Button
                   disableRipple
                   component={RouterLink}
@@ -485,7 +499,7 @@ function SidebarMenu() {
                 >
                   Maintenance
                 </Button>
-              </ListItem> */}
+              </ListItem>
             </List>
           </SubMenuWrapper>
         </List>

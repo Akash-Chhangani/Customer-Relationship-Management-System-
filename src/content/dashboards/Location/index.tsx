@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import {
   Button,
   Card,
@@ -12,66 +13,78 @@ import {
   DialogTitle,
   Grid,
   IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
   Typography
 } from '@mui/material';
 import AddTwoToneIcon from '@mui/icons-material/AddTwoTone';
 import { Helmet } from 'react-helmet-async';
-import PageTitleWrapper from 'src/components/PageTitleWrapper';
-import { SetStateAction, useEffect, useState } from 'react';
-import DescriptionIcon from '@mui/icons-material/Description';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import Footer from 'src/components/Footer';
-import DataNotFound from './dataNotFound.jpg';
+import DataNotFound from 'src/content/dashboards/dataNotFound.jpg';
+import PageTitleWrapper from 'src/components/PageTitleWrapper';
 
-const Notes = () => {
-  const [heading, setHeading] = useState('');
-  const [note, setNote] = useState('');
-  const [notes, setNotes] = useState([]);
+const Index = () => {
+  const [country, setCountry] = useState('');
+  const [locationDescription, setLocationDescription] = useState('');
+  const [locations, setLocations] = useState([]);
   const [open, setOpen] = useState(false);
-  const [editingNote, setEditingNote] = useState(null);
+  const [editingLocation, setEditingLocation] = useState(null);
+  const [countries, setCountries] = useState([]);
 
   useEffect(() => {
-    // Retrieve notes data from local storage when component mounts
-    const storedNotes = localStorage.getItem('notes');
+    // Retrieve locations data from local storage when component mounts
+    const storedNotes = localStorage.getItem('locations');
     if (storedNotes) {
-      setNotes(JSON.parse(storedNotes));
+      setLocations(JSON.parse(storedNotes));
     }
   }, []);
 
   useEffect(() => {
-    // Save notes data to local storage whenever it changes
-    localStorage.setItem('notes', JSON.stringify(notes));
-  }, [notes]);
+    // Fetch list of countries from an API
+    fetch('https://restcountries.com/v3.1/all')
+      .then((response) => response.json())
+      .then((data) => {
+        // Extract country names from the fetched data
+        const countryNames = data.map((country) => country.name.common);
+        setCountries(countryNames);
+      })
+      .catch((error) => console.error('Error fetching countries:', error));
+  }, []);
+
+  useEffect(() => {
+    // Save locations data to local storage whenever it changes
+    localStorage.setItem('locations', JSON.stringify(locations));
+  }, [locations]);
 
   const handleCreateNote = () => {
-    if (heading.trim() !== '' && note.trim() !== '') {
+    if (country.trim() !== '' && locationDescription.trim() !== '') {
       const newNote = {
         id: Date.now(), // Unique id generated using Date.now()
-        heading: heading,
-        note: note,
+        country: country,
+        locationDescription: locationDescription,
         createdTime: new Date().toLocaleString()
       };
-      setNotes([...notes, newNote]);
-      setHeading('');
-      setNote('');
+      setLocations([...locations, newNote]);
+      setCountry('');
+      setLocationDescription('');
     }
   };
 
   const handleClickOpen = () => {
     setOpen(true);
-    setEditingNote(null); // Reset editingNote when opening the modal for creating a new note
+    setEditingLocation(null); // Reset editingLocation when opening the modal for creating a new location
   };
 
-  const handleEditNote = (note: {
-    heading: SetStateAction<string>;
-    note: SetStateAction<string>;
-  }) => {
+  const handleEditNote = (location) => {
     setOpen(true);
-    setEditingNote(note);
-    setHeading(note.heading);
-    setNote(note.note);
+    setEditingLocation(location);
+    setCountry(location.country);
+    setLocationDescription(location.locationDescription);
   };
 
   const handleCancelEdit = () => {
@@ -80,30 +93,34 @@ const Notes = () => {
 
   const handleClose = () => {
     setOpen(false);
-    setEditingNote(null);
-    setHeading('');
-    setNote('');
+    setEditingLocation(null);
+    setCountry('');
+    setLocationDescription('');
   };
 
   const handleSaveEdit = () => {
-    if (heading.trim() !== '' && note.trim() !== '' && editingNote) {
+    if (
+      country.trim() !== '' &&
+      locationDescription.trim() !== '' &&
+      editingLocation
+    ) {
       const editedNote = {
-        ...editingNote,
-        heading: heading,
-        note: note,
+        ...editingLocation,
+        country: country,
+        locationDescription: locationDescription,
         editedTime: new Date().toLocaleString() // Add editedTime property
       };
-      const updatedNotes = notes.map((n) =>
-        n.id === editingNote.id ? editedNote : n
+      const updatedNotes = locations.map((n) =>
+        n.id === editingLocation.id ? editedNote : n
       );
-      setNotes(updatedNotes);
+      setLocations(updatedNotes);
       handleClose();
     }
   };
 
   const handleDeleteNote = (id) => {
-    const updatedNotes = notes.filter((note) => note.id !== id);
-    setNotes(updatedNotes);
+    const updatedNotes = locations.filter((location) => location.id !== id);
+    setLocations(updatedNotes);
   };
 
   const user = {
@@ -114,18 +131,19 @@ const Notes = () => {
     <>
       {/* For Change the title on web page */}
       <Helmet>
-        <title>Notes</title>
+        <title>Location</title>
       </Helmet>
 
       {/* For display the main contain of the page  */}
+
       <PageTitleWrapper>
         <Grid container justifyContent="space-between" alignItems="center">
           <Grid item>
             <Typography variant="h3" component="h3" gutterBottom>
-              Notes
+              Location
             </Typography>
             <Typography variant="subtitle2">
-              {user.name}, these are the list of the Notes
+              {user.name}, these are the list of the Locations
             </Typography>
           </Grid>
           <Grid item>
@@ -143,13 +161,13 @@ const Notes = () => {
                   marginRight: '5px'
                 }}
               />{' '}
-              Create Notes
+              Create Location
             </Button>
           </Grid>
         </Grid>
       </PageTitleWrapper>
 
-      {/* Whn create new Notes this aper */}
+      {/* When creating a new location, this paper appears */}
       <Dialog
         open={open}
         onClose={handleClose}
@@ -167,7 +185,7 @@ const Notes = () => {
               fontSize: '24px'
             }}
           >
-            <DescriptionIcon
+            <LocationOnIcon
               sx={{
                 fontSize: '2rem',
                 fontWeight: 'bold',
@@ -175,7 +193,7 @@ const Notes = () => {
                 marginRight: '5px'
               }}
             />{' '}
-            {editingNote ? 'Edit Note' : 'Create Notes'}
+            {editingLocation ? 'Edit Location' : 'Create Location'}
           </Typography>
         </DialogTitle>
 
@@ -183,26 +201,35 @@ const Notes = () => {
           <DialogContentText id="alert-dialog-description">
             <Grid container spacing={2} justifyContent="center">
               <Grid item xs={12}>
-                <TextField
-                  sx={{ marginTop: '1rem' }}
-                  id="outlined-basic"
-                  label="Title"
-                  variant="outlined"
+                <InputLabel id="select-country-label">
+                  Select Country
+                </InputLabel>
+                <Select
                   fullWidth
-                  value={heading}
-                  onChange={(e) => setHeading(e.target.value)}
-                />
+                  labelId="select-country-label"
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  {countries.sort().map((countryName, index) => (
+                    <MenuItem key={index} value={countryName}>
+                      {countryName}
+                    </MenuItem>
+                  ))}
+                </Select>
               </Grid>
               <Grid item xs={12}>
                 <TextField
                   id="outlined-multiline-static"
-                  label="Note-Description"
+                  label="Location Description"
                   multiline
                   rows={4}
                   variant="outlined"
                   fullWidth
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
+                  value={locationDescription}
+                  onChange={(e) => setLocationDescription(e.target.value)}
                 />
               </Grid>
             </Grid>
@@ -214,24 +241,31 @@ const Notes = () => {
             variant="contained"
             color="success"
             sx={{ margin: '0.6rem' }}
-            onClick={editingNote ? handleSaveEdit : handleCreateNote}
+            onClick={() => {
+              if (editingLocation) {
+                handleSaveEdit();
+              } else {
+                handleCreateNote();
+              }
+              handleClose(); // Close the dialog after saving
+            }}
           >
-            {editingNote ? 'Save' : 'Submit'}
+            {editingLocation ? 'Save' : 'Submit'}
           </Button>
+
           <Button
-            // onClick={handleClose}
-            onClick={editingNote ? handleCancelEdit : handleClose}
+            onClick={editingLocation ? handleCancelEdit : handleClose}
             variant="contained"
             sx={{ margin: '1rem' }}
           >
-            {editingNote ? 'Cancel' : 'Cancel'}
+            {editingLocation ? 'Cancel' : 'Cancel'}
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* when we add enw notes one card aper */}
+      {/* When we add new locations, cards appear */}
       <Container maxWidth="lg">
-        {notes.length > 0 ? (
+        {locations.length > 0 ? (
           <Grid
             container
             direction="row"
@@ -239,7 +273,7 @@ const Notes = () => {
             alignItems="stretch"
             spacing={3}
           >
-            {notes.map((note, index) => (
+            {locations.map((location, index) => (
               <Grid item xs={12} sm={6} md={4} key={index}>
                 <Card sx={{ maxWidth: '100%', height: '100%' }}>
                   <CardHeader
@@ -247,16 +281,16 @@ const Notes = () => {
                       <IconButton
                         sx={{ marginRight: '0.5rem' }}
                         aria-label="edit"
-                        onClick={() => handleEditNote(note)}
+                        onClick={() => handleEditNote(location)}
                       >
                         <EditIcon />
                       </IconButton>
                     }
-                    title={note.heading}
+                    title={location.country}
                   />
                   <CardContent>
                     <Typography variant="body2" color="black">
-                      {note.note}
+                      {location.locationDescription}
                     </Typography>
                   </CardContent>
                   <CardActions
@@ -267,14 +301,14 @@ const Notes = () => {
                     }}
                   >
                     <Typography variant="caption" display="block" gutterBottom>
-                      {note.editedTime
-                        ? `Edited At: ${note.editedTime}`
-                        : `Created At: ${note.createdTime}`}
+                      {location.editedTime
+                        ? `Edited At: ${location.editedTime}`
+                        : `Created At: ${location.createdTime}`}
                     </Typography>
                     <IconButton
                       aria-label="delete"
                       color="error"
-                      onClick={() => handleDeleteNote(note.id)}
+                      onClick={() => handleDeleteNote(location.id)}
                     >
                       <DeleteIcon />
                     </IconButton>
@@ -307,4 +341,4 @@ const Notes = () => {
   );
 };
 
-export default Notes;
+export default Index;

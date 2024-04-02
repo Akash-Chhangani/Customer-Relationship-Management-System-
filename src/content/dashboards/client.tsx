@@ -18,7 +18,8 @@ import {
   DialogTitle,
   DialogContentText,
   DialogActions,
-  Container
+  Container,
+  IconButton
 } from '@mui/material';
 import './Crypto/client.css';
 import BusinessIcon from '@mui/icons-material/Business';
@@ -26,7 +27,8 @@ import AddTwoToneIcon from '@mui/icons-material/AddTwoTone';
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
 import { Helmet } from 'react-helmet-async';
 import Footer from 'src/components/Footer';
-import DataNotFound from './Crypto/dataNotFound.jpg';
+import DataNotFound from './dataNotFound.jpg';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function client() {
   const [open, setOpen] = useState(false);
@@ -339,13 +341,13 @@ export default function client() {
                         <TableCell align="center">{data.state}</TableCell>
                         <TableCell align="center">{data.country}</TableCell>
                         <TableCell align="center">
-                          <Button
-                            variant="contained"
+                          <IconButton
+                            aria-label="delete"
                             color="error"
                             onClick={() => handleDelete(index)}
                           >
-                            Delete
-                          </Button>
+                            <DeleteIcon />
+                          </IconButton>
                         </TableCell>
                       </TableRow>
                     ))}
