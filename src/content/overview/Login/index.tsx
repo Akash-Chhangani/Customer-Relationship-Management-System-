@@ -23,7 +23,7 @@ function Overview() {
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    navigate('/dashboards/crypto');
+    navigate('/dashboards/Companies');
   };
 
   return (

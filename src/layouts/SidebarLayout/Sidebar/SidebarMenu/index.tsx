@@ -36,6 +36,7 @@ import SendIcon from '@mui/icons-material/Send';
 import DescriptionIcon from '@mui/icons-material/Description';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import EmailIcon from '@mui/icons-material/Email';
+import ApartmentIcon from '@mui/icons-material/Apartment';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 const MenuWrapper = styled(Box)(
@@ -221,10 +222,21 @@ function SidebarMenu() {
                   disableRipple
                   component={RouterLink}
                   onClick={closeSidebar}
-                  to="/dashboards/crypto"
+                  to="/dashboards/Companies"
                   startIcon={<BusinessIcon />}
                 >
                   Companies
+                </Button>
+              </ListItem>
+              <ListItem component="div">
+                <Button
+                  disableRipple
+                  component={RouterLink}
+                  onClick={closeSidebar}
+                  to="/dashboards/Office"
+                  startIcon={<ApartmentIcon />}
+                >
+                  Office
                 </Button>
               </ListItem>
               <ListItem component="div">
@@ -290,10 +302,21 @@ function SidebarMenu() {
                   disableRipple
                   component={RouterLink}
                   onClick={closeSidebar}
-                  to="/dashboards/Email"
+                  to="/dashboards/Location"
                   startIcon={<LocationOnIcon />}
                 >
                   Location
+                </Button>
+              </ListItem>
+              <ListItem component="div">
+                <Button
+                  disableRipple
+                  component={RouterLink}
+                  onClick={closeSidebar}
+                  to="/dashboards/Email"
+                  startIcon={<EmailIcon />}
+                >
+                  Email
                 </Button>
               </ListItem>
             </List>

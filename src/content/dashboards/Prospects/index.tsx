@@ -173,7 +173,7 @@ const Prospects = () => {
     <>
       {/* For Change the title on web page */}
       <Helmet>
-        <title>Notes</title>
+        <title>Prospects</title>
       </Helmet>
 
       {/* For display the main contain of the page  */}

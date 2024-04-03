@@ -28,7 +28,7 @@ import Footer from 'src/components/Footer';
 import DataNotFound from 'src/content/pages/Status/DataNotFound';
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
 
-const Index = () => {
+const location = () => {
   const [country, setCountry] = useState('');
   const [locationDescription, setLocationDescription] = useState('');
   const [locations, setLocations] = useState([]);
@@ -327,4 +327,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default location;

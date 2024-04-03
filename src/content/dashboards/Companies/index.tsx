@@ -28,7 +28,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import DataNotFound from 'src/content/pages/Status/DataNotFound';
 
-const Client = () => {
+const company = () => {
   const [open, setOpen] = useState(false);
   const [submitClientData, setSubmitClientData] = useState([]);
   const [editingClientTable, setEditingClientTable] = useState(null);
@@ -231,7 +231,16 @@ const Client = () => {
           </Typography>
         </DialogTitle>
 
-        <DialogContent>
+        <DialogContent
+          sx={{
+            overflowY: 'scroll',
+            '&::-webkit-scrollbar': {
+              width: '0 !important' // Hide scrollbar on Chrome, Safari, and Opera
+            },
+            '-ms-overflow-style': 'none', // Hide scrollbar on IE and Edge
+            'scrollbar-width': 'none' // Hide scrollbar on Firefox
+          }}
+        >
           <DialogContentText id="alert-dialog-description">
             <Grid container spacing={2} justifyContent="center">
               <Grid item xs={12}>
@@ -438,4 +447,4 @@ const Client = () => {
   );
 };
 
-export default Client;
+export default company;

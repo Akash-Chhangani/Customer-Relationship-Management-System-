@@ -5,10 +5,14 @@ import Signup from 'src/content/overview/Hero/Signup';
 import SidebarLayout from 'src/layouts/SidebarLayout';
 import BaseLayout from 'src/layouts/BaseLayout';
 
+import Companies from './content/dashboards/Companies/index';
+import Office from './content/dashboards/Office';
+
 import SuspenseLoader from 'src/components/SuspenseLoader';
 
 import './content/overview/Hero/index';
 import Prospects from 'src/content/dashboards/Prospects';
+import Email from 'src/content/dashboards/Email';
 
 const Loader = (Component) => (props) =>
   (
@@ -19,24 +23,31 @@ const Loader = (Component) => (props) =>
 
 // Pages
 
-const Overview = Loader(lazy(() => import('./content/overview/index')));
+const Overview = Loader(lazy(() => import('./content/overview/Login')));
 // Dashboards
 
-const Crypto = Loader(lazy(() => import('src/content/dashboards/client')));
+const companies = Loader(
+  lazy(() => import('src/content/dashboards/Companies'))
+);
 
-const Notes = Loader(lazy(() => import('src/content/dashboards/notes')));
+const Notes = Loader(lazy(() => import('src/content/dashboards/Notes/notes')));
+
+const office = Loader(
+  lazy(() => import('src/content/dashboards/Office/index'))
+);
 
 const prospects = Loader(
   lazy(() => import('src/content/dashboards/Prospects'))
 );
-
-const Location = Loader(lazy(() => import('src/content/dashboards/Location')));
 
 // Applications
 
 const Messenger = Loader(
   lazy(() => import('src/content/applications/Messenger'))
 );
+const Location = Loader(lazy(() => import('src/content/dashboards/Location')));
+const email = Loader(lazy(() => import('src/content/dashboards/Email')));
+
 const Transactions = Loader(
   lazy(() => import('src/content/applications/Transactions'))
 );
@@ -143,8 +154,8 @@ const routes = [
         element: <Navigate to="crypto" replace />
       },
       {
-        path: 'crypto',
-        element: <Crypto />
+        path: 'companies',
+        element: <Companies />
       },
       {
         path: 'notes',
@@ -159,8 +170,16 @@ const routes = [
         element: <Prospects />
       },
       {
-        path: 'Email',
+        path: 'location',
         element: <Location />
+      },
+      {
+        path: 'office',
+        element: <Office />
+      },
+      {
+        path: 'email',
+        element: <Email />
       }
     ]
   },
@@ -172,6 +191,7 @@ const routes = [
         path: '',
         element: <Navigate to="transactions" replace />
       },
+
       {
         path: 'transactions',
         element: <Transactions />
