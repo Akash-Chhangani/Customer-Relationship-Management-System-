@@ -124,7 +124,7 @@ const location = () => {
   };
 
   const user = {
-    name: 'Catherine Pike'
+    name: 'Akash Chhangani'
   };
 
   return (

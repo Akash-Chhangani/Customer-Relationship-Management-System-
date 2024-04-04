@@ -1,3 +1,4 @@
+import React, { useState } from 'react'; // Import useState
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -79,6 +80,21 @@ const CardCoverAction = styled(Box)(
 );
 
 const ProfileCover = ({ user }) => {
+  // State to store selected cover image
+  const [coverImage, setCoverImage] = useState(user.coverImg);
+
+  // Function to handle cover image change
+  const handleCoverImageChange = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setCoverImage(reader.result);
+    };
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <>
       <Box display="flex" mb={3}>
@@ -97,9 +113,15 @@ const ProfileCover = ({ user }) => {
         </Box>
       </Box>
       <CardCover>
-        <CardMedia image={user.coverImg} />
+        <CardMedia image={coverImage} />
         <CardCoverAction>
-          <Input accept="image/*" id="change-cover" multiple type="file" />
+          <Input
+            accept="image/*"
+            id="change-cover"
+            multiple
+            type="file"
+            onChange={handleCoverImageChange} // Attach onChange event
+          />
           <label htmlFor="change-cover">
             <Button
               startIcon={<UploadTwoToneIcon />}
@@ -121,7 +143,7 @@ const ProfileCover = ({ user }) => {
             type="file"
           />
           <label htmlFor="icon-button-file">
-            <IconButton component="span" color="primary">
+            <IconButton component="span" color="success">
               <UploadTwoToneIcon />
             </IconButton>
           </label>

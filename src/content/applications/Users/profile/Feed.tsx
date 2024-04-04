@@ -14,40 +14,46 @@ import AddTwoToneIcon from '@mui/icons-material/AddTwoTone';
 function Feed() {
   const feed = [
     {
-      name: 'Munroe Dacks',
-      jobtitle: 'Senior Accountant',
-      company: 'Trudoo',
-      avatar: '/static/images/avatars/1.jpg'
+      name: 'Mayuri Nayak',
+      jobtitle: 'Hiring Recruiters',
+      company: 'DevBeeIT',
+      avatar: '/static/images/avatars/1.jpg',
+      socialAccount: 'https://www.instagram.com/mayuri_nayak/'
     },
     {
-      name: 'Gunilla Canario',
+      name: 'Chanchal Raut ',
       jobtitle: 'Associate Professor',
-      company: 'Buzzdog',
-      avatar: '/static/images/avatars/2.jpg'
+      company: 'Persistance',
+      avatar: '/static/images/avatars/2.jpg',
+      socialAccount: 'https://www.instagram.com/chanchalraut23/'
     },
     {
-      name: 'Rowena Geistmann',
-      jobtitle: 'Pharmacist',
-      company: 'Yozio',
-      avatar: '/static/images/avatars/3.jpg'
+      name: 'Gautam Ambirwar',
+      jobtitle: 'Event Management',
+      company: 'BombayWala',
+      avatar: '/static/images/avatars/3.jpg',
+      socialAccount: 'https://www.instagram.com/gautam_ambirwar/'
     },
     {
-      name: 'Ede Stoving',
-      jobtitle: 'VP Operations',
-      company: 'Cogibox',
-      avatar: '/static/images/avatars/4.jpg'
+      name: 'Romit Shende',
+      jobtitle: 'CEO',
+      company: 'Amigoes',
+      avatar: '/static/images/avatars/4.jpg',
+      socialAccount: 'https://www.instagram.com/romit__shende/'
     },
     {
-      name: 'Crissy Spere',
+      name: 'Kshitija Barbayya',
       jobtitle: 'Social Worker',
-      company: 'Babbleblab',
-      avatar: '/static/images/avatars/5.jpg'
+      company: 'Xceller',
+      avatar: '/static/images/avatars/5.jpg',
+      socialAccount: 'https://www.instagram.com/kshitija_930/'
     },
     {
-      name: 'Michel Greatbanks',
-      jobtitle: 'Research Assistant III',
-      company: 'Aimbu',
-      avatar: '/static/images/avatars/6.jpg'
+      name: 'Kunal Sahare',
+      jobtitle: 'Paranormal Investigator',
+      company: 'NGO',
+      avatar: '/static/images/avatars/6.jpg',
+      socialAccount: 'https://www.instagram.com/__kunal.sahare___/'
     }
   ];
 
@@ -74,6 +80,9 @@ function Feed() {
                   <Button
                     variant="outlined"
                     size="small"
+                    sx={{ color: 'green' }}
+                    href={_feed.socialAccount}
+                    target="_blank"
                     startIcon={<AddTwoToneIcon />}
                   >
                     Follow

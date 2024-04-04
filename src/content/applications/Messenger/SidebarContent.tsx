@@ -94,7 +94,7 @@ const TabsContainerWrapper = styled(Box)(
 
 function SidebarContent() {
   const user = {
-    name: 'Catherine Pike',
+    name: 'Akash Chhangani',
     avatar: '/static/images/avatars/51766.jpg',
     jobtitle: 'Software Developer'
   };

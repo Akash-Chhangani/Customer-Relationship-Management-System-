@@ -7,7 +7,7 @@ import Footer from 'src/components/Footer';
 
 const office = () => {
   const user = {
-    name: 'Catherine Pike'
+    name: 'Akash Chhangani'
   };
   return (
     <>

@@ -27,7 +27,7 @@ function BottomBarContent() {
   const theme = useTheme();
 
   const user = {
-    name: 'Catherine Pike',
+    name: 'Akash Chhangani',
     avatar: '/static/images/avatars/51766.jpg'
   };
 

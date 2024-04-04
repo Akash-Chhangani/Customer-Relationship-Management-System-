@@ -107,7 +107,7 @@ const Notes = () => {
   };
 
   const user = {
-    name: 'Catherine Pike'
+    name: 'Akash Chhangani'
   };
 
   return (
