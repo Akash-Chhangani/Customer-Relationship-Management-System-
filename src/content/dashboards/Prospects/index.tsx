@@ -336,7 +336,7 @@ const Prospects = () => {
               handleClose(); // Close the dialog after saving
             }}
           >
-            {data.name ? 'Save' : 'Submit'}
+            {editingTable ? 'Save' : 'Submit'}
           </Button>
           <Button
             variant="contained"

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Button,
   Dialog,
@@ -11,7 +11,6 @@ import {
   Typography,
   Card,
   CardContent,
-  CardHeader,
   IconButton,
   CardActions,
   Container
@@ -28,41 +27,86 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import StatusComingSoon from 'src/content/pages/Status/ComingSoon';
+import DataNotFound from 'src/content/pages/Status/DataNotFound';
 
 const Email = () => {
-  const [content, setContent] = useState('');
-  const [title, setTitle] = useState('');
   const [templates, setTemplates] = useState([]);
-  const [expandedTemplates, setExpandedTemplates] = useState([]);
   const [open, setOpen] = useState(false);
+  const [editIndex, setEditIndex] = useState(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editContent, setEditContent] = useState('');
   const [showComingSoon, setShowComingSoon] = useState(false); // State to control rendering of StatusComingSoon
+  const [editingTemplate, setEditingTemplate] = useState(false); // State to track if editing a template
+
+  useEffect(() => {
+    // Retrieve email templates data from local storage when component mounts
+    const storedTemplates = localStorage.getItem('emailTemplates');
+    if (storedTemplates) {
+      setTemplates(JSON.parse(storedTemplates));
+    }
+  }, []);
+
+  useEffect(() => {
+    // Save email templates data to local storage whenever it changes
+    localStorage.setItem('emailTemplates', JSON.stringify(templates));
+  }, [templates]);
 
   const handleClose = () => {
     setOpen(false);
+    setEditingTemplate(false); // Reset editingTemplate state
   };
 
   const handleClick = () => {
     setOpen(true);
   };
 
-  const handleSubmit = () => {
-    // Save the template data
-    const newTemplate = { title, content };
-    setTemplates([...templates, newTemplate]);
-    // Reset fields
-    setContent('');
-    setTitle('');
-    setOpen(false);
+  const handleSaveEdit = () => {
+    if (editIndex !== null) {
+      const updatedTemplates = [...templates];
+      updatedTemplates[editIndex] = { title: editTitle, content: editContent };
+      setTemplates(updatedTemplates);
+      setEditIndex(null);
+      setEditTitle('');
+      setEditContent('');
+      setOpen(false); // Close the dialog after saving
+      setEditingTemplate(false); // Reset editingTemplate state
+    }
   };
 
-  const toggleExpand = (index) => {
-    const updatedExpandedTemplates = [...expandedTemplates];
-    updatedExpandedTemplates[index] = !updatedExpandedTemplates[index];
-    setExpandedTemplates(updatedExpandedTemplates);
+  const handleEditTemplate = (index) => {
+    const template = templates[index];
+    setEditIndex(index);
+    setEditTitle(template.title); // Set the title for editing
+    setEditContent(template.content); // Set the content for editing
+    setOpen(true); // Open the dialog
+    setEditingTemplate(true); // Set editingTemplate to true
+  };
+
+  const handleCreateTemplate = () => {
+    const newTemplate = { title: editTitle, content: editContent }; // Use editTitle and editContent for new template
+    if (editIndex !== null) {
+      const updatedTemplates = [...templates];
+      updatedTemplates[editIndex] = newTemplate;
+      setTemplates(updatedTemplates);
+    } else {
+      setTemplates([...templates, newTemplate]);
+    }
+    // Reset fields
+    setEditIndex(null); // Reset editIndex
+    setEditTitle('');
+    setEditContent('');
+    setOpen(false); // Close the dialog after saving
+    setEditingTemplate(false); // Reset editingTemplate state
   };
 
   const handleUseTemplate = () => {
     setShowComingSoon(!showComingSoon); // Toggle the state
+  };
+
+  const handleDeleteTemplate = (index) => {
+    const updatedTemplates = [...templates];
+    updatedTemplates.splice(index, 1); // Remove the template at the specified index
+    setTemplates(updatedTemplates); // Update the state
   };
 
   const user = {
@@ -140,7 +184,7 @@ const Email = () => {
                 marginRight: '5px'
               }}
             />{' '}
-            Create Template
+            {editingTemplate ? 'Edit Template' : 'Create Template'}
           </Typography>
         </DialogTitle>
 
@@ -148,30 +192,29 @@ const Email = () => {
           sx={{
             overflowY: 'scroll',
             '&::-webkit-scrollbar': {
-              width: '0 !important' // Hide scrollbar on Chrome, Safari, and Opera
+              width: '0 !important'
             },
-            '-ms-overflow-style': 'none', // Hide scrollbar on IE and Edge
-            'scrollbar-width': 'none' // Hide scrollbar on Firefox
+            '-ms-overflow-style': 'none',
+            'scrollbar-width': 'none'
           }}
         >
           <DialogContentText id="alert-dialog-description">
             <Grid container spacing={2} justifyContent="center">
               <Grid item xs={12}>
                 <TextField
-                  sx={{ marginTop: '1rem' }}
+                  sx={{ marginTop: '1rem', marginBottom: '1rem' }}
                   id="outlined-basic"
                   label="Title"
                   variant="outlined"
                   fullWidth
                   required
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  value={editTitle} // Use editTitle for editing
+                  onChange={(e) => setEditTitle(e.target.value)}
                 />
-              </Grid>
-              <Grid item xs={12}>
+
                 <JoditEditor
-                  value={content}
-                  onBlur={(newContent) => setContent(newContent)}
+                  value={editContent} // Use editContent for editing
+                  onBlur={(newContent) => setEditContent(newContent)}
                   config={{
                     style: {
                       height: '20.5rem'
@@ -188,107 +231,116 @@ const Email = () => {
             variant="contained"
             color="success"
             sx={{ margin: '0.6rem' }}
-            onClick={handleSubmit}
+            onClick={() => {
+              if (editingTemplate) {
+                handleSaveEdit();
+              } else {
+                handleCreateTemplate();
+              }
+              handleClose(); // Close the dialog after saving
+            }}
           >
-            Submit
+            {editingTemplate ? 'Save' : 'Submit'}
           </Button>
           <Button
             variant="contained"
             sx={{ margin: '1rem' }}
             onClick={handleClose}
           >
-            Cancel
+            {editingTemplate ? 'Cancel' : 'Cancel'}
           </Button>
         </DialogActions>
       </Dialog>
 
       <Container>
-        <Grid container spacing={2} justifyContent="center">
-          {templates.map((template, index) => (
-            <Grid item xs={12} md={6} lg={4} key={index}>
-              <Card
-                sx={{
-                  border: '1px solid black',
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column'
-                }}
-              >
-                <CardContent>
-                  <Typography
-                    variant="h6" // You can adjust the variant to your desired size
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-
-                      fontSize: '1.5rem' // Increase font size
-                    }}
-                  >
-                    {template.title}
-                    <IconButton
-                      sx={{ marginLeft: '0.5rem' }} // Adjust the spacing as needed
-                      aria-label="success"
-                      onClick={() => toggleExpand(index)}
+        {templates.length > 0 ? (
+          <Grid container spacing={2} justifyContent="center">
+            {templates.map((template, index) => (
+              <Grid item xs={12} md={6} lg={4} key={index}>
+                <Card
+                  sx={{
+                    border: '1px solid black',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column'
+                  }}
+                >
+                  <CardContent>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '1.5rem'
+                      }}
                     >
-                      <EditIcon sx={{ color: 'green' }} />
-                    </IconButton>
-                  </Typography>
-                  {expandedTemplates[index] ? (
-                    <Typography variant="body1">{template.content}</Typography>
-                  ) : (
+                      {template.title}
+                      <IconButton
+                        sx={{ marginLeft: '0.5rem' }}
+                        aria-label="success"
+                        onClick={() => handleEditTemplate(index)}
+                      >
+                        <EditIcon sx={{ color: 'green' }} />
+                      </IconButton>
+                    </Typography>
                     <Typography
                       variant="body1"
                       style={{
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         display: '-webkit-box',
-                        WebkitLineClamp: 10, // Number of lines to show before truncating
+                        WebkitLineClamp: 10,
                         WebkitBoxOrient: 'vertical'
                       }}
                       dangerouslySetInnerHTML={{ __html: template.content }}
                     />
-                  )}
-                </CardContent>
+                  </CardContent>
 
-                <CardActions
-                  sx={{
-                    marginTop: 'auto',
-                    display: 'flex',
-                    justifyContent: 'space-around'
-                  }}
-                >
-                  <IconButton aria-label="add to favorites" color="primary">
-                    <VisibilityIcon onClick={() => toggleExpand(index)} />
-                  </IconButton>
-                  <IconButton aria-label="add to favorites">
-                    <FavoriteIcon />
-                  </IconButton>
-
-                  <IconButton aria-label="share" color="primary">
-                    <ShareIcon /> {/* Change color to blue */}
-                  </IconButton>
-
-                  <IconButton aria-label="delete" color="error">
-                    <DeleteIcon />
-                  </IconButton>
-                  <Button
-                    variant="contained"
-                    color="success"
-                    onClick={handleUseTemplate} // Call handleUseTemplate when the button is clicked
+                  <CardActions
+                    sx={{
+                      marginTop: 'auto',
+                      display: 'flex',
+                      justifyContent: 'space-around'
+                    }}
                   >
-                    Use this Template
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+                    <IconButton aria-label="add to favorites" color="primary">
+                      <VisibilityIcon />
+                    </IconButton>
+                    <IconButton aria-label="add to favorites">
+                      <FavoriteIcon />
+                    </IconButton>
+
+                    <IconButton aria-label="share" color="primary">
+                      <ShareIcon />
+                    </IconButton>
+
+                    <IconButton
+                      aria-label="delete"
+                      color="error"
+                      onClick={() => handleDeleteTemplate(index)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                    <Button
+                      variant="contained"
+                      color="success"
+                      onClick={handleUseTemplate}
+                    >
+                      Use this Template
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        ) : (
+          <DataNotFound />
+        )}
       </Container>
 
       <Footer />
 
-      {/* Render StatusComingSoon component if showComingSoon is true */}
       {showComingSoon && <StatusComingSoon />}
     </>
   );
