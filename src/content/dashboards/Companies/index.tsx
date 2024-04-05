@@ -27,6 +27,7 @@ import Footer from 'src/components/Footer';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import DataNotFound from 'src/content/pages/Status/DataNotFound';
+import { createcliet } from 'src/company/company.service';
 
 const company = () => {
   const [open, setOpen] = useState(false);
@@ -101,6 +102,11 @@ const company = () => {
     }
   };
 
+
+
+  
+
+
   useEffect(() => {
     const storedData = localStorage.getItem('submitClientData');
     if (storedData) {
@@ -135,7 +141,9 @@ const company = () => {
     localStorage.setItem('submitClientData', JSON.stringify(newData));
   };
 
-  const handleSubmit = () => {
+  
+
+  const handleSubmit =async () => {
     const emptyFields = Object.values(formData).filter(
       (value) => value.trim() === ''
     );
@@ -144,22 +152,51 @@ const company = () => {
     } else {
       const newData = { ...formData };
       setSubmitClientData((prevData) => [...prevData, newData]);
-      setFormData({
-        companyName: '',
-        address: '',
-        officeId: '',
-        email: '',
-        phoneNo: '',
-        city: '',
-        state: '',
-        country: ''
-      });
-      localStorage.setItem(
-        'submitClientData',
-        JSON.stringify([...submitClientData, newData])
-      );
+
+
+      console.log("formdata",formData);
+      
+       try{
+        const response = await createcliet(formData)
+  
+        console.log("response",response);
+        if(response.status){
+          console.log("company created");
+          
+        }else{
+          console.log("error");
+          
+        }
+        
+      }catch(error){
+        console.log("error occured",error);
+        
+      }
     }
   };
+
+  
+  // const handleSubmit = async() => {
+
+  //   try{
+  //     const response = await createcliet(formData)
+
+  //     console.log("response",response);
+  //     if(response.status){
+  //       console.log("company created");
+        
+  //     }else{
+  //       console.log("error");
+        
+  //     }
+      
+  //   }catch(error){
+  //     console.log("error occured",error);
+      
+  //   }
+    
+  // };
+
 
   const user = {
     name: 'Catherine Pike'
@@ -363,6 +400,7 @@ const company = () => {
               }
               handleClose();
             }}
+            // onClick={handleSubmit}
           >
             {editingClientTable ? 'Save' : 'Submit'}
           </Button>

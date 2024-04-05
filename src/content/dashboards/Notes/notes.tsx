@@ -1,3 +1,5 @@
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
   Button,
   Card,
@@ -16,12 +18,11 @@ import {
   Typography
 } from '@mui/material';
 import AddTwoToneIcon from '@mui/icons-material/AddTwoTone';
-import { Helmet } from 'react-helmet-async';
-import PageTitleWrapper from 'src/components/PageTitleWrapper';
-import { SetStateAction, useEffect, useState } from 'react';
 import DescriptionIcon from '@mui/icons-material/Description';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { Helmet } from 'react-helmet-async';
+import PageTitleWrapper from 'src/components/PageTitleWrapper';
 import Footer from 'src/components/Footer';
 import DataNotFound from 'src/content/pages/Status/DataNotFound';
 
@@ -33,49 +34,69 @@ const Notes = () => {
   const [editingNote, setEditingNote] = useState(null);
 
   useEffect(() => {
-    // Retrieve notes data from local storage when component mounts
-    const storedNotes = localStorage.getItem('notes');
-    if (storedNotes) {
-      setNotes(JSON.parse(storedNotes));
-    }
+    fetchNotes();
   }, []);
 
-  useEffect(() => {
-    // Save notes data to local storage whenever it changes
-    localStorage.setItem('notes', JSON.stringify(notes));
-  }, [notes]);
-
-  const handleCreateNote = () => {
-    if (heading.trim() !== '' && note.trim() !== '') {
-      const newNote = {
-        id: Date.now(), // Unique id generated using Date.now()
-        heading: heading,
-        note: note,
-        createdTime: new Date().toLocaleString()
-      };
-      setNotes([...notes, newNote]);
-      setHeading('');
-      setNote('');
+  const fetchNotes = async () => {
+    try {
+      const response = await axios.get('http://localhost:3003/notes');
+      setNotes(response.data);
+    } catch (error) {
+      console.error('Error fetching notes:', error);
     }
   };
 
-  const handleClickOpen = () => {
-    setOpen(true);
-    setEditingNote(null); // Reset editingNote when opening the modal for creating a new note
+  const createNote = async () => {
+    try {
+      const response = await axios.post('http://localhost:3003/notes', {
+        title: heading,
+        description: note
+      });
+      if (response.status === 201) {
+        fetchNotes();
+        handleClose();
+      }
+    } catch (error) {
+      console.error('Error creating note:', error);
+    }
   };
 
-  const handleEditNote = (note: {
-    heading: SetStateAction<string>;
-    note: SetStateAction<string>;
-  }) => {
-    setOpen(true);
+  const handleEditNote = (note) => {
     setEditingNote(note);
-    setHeading(note.heading);
-    setNote(note.note);
+    setHeading(note.title);
+    setNote(note.description);
+    setOpen(true);
   };
 
-  const handleCancelEdit = () => {
-    setOpen(false);
+  const updateNote = async () => {
+    try {
+      const response = await axios.put(
+        `http://localhost:3003/notes/${editingNote._id}`,
+        {
+          title: heading,
+          description: note
+        }
+      );
+      if (response.status === 200) {
+        fetchNotes();
+        handleClose();
+      }
+    } catch (error) {
+      console.error('Error updating note:', error);
+    }
+  };
+
+  const handleDeleteNote = async (id) => {
+    try {
+      const response = await axios.delete(`http://localhost:3003/notes/${id}`);
+      if (response.status === 200) {
+        fetchNotes();
+
+        
+      }
+    } catch (error) {
+      console.error('Error deleting note:', error);
+    }
   };
 
   const handleClose = () => {
@@ -85,39 +106,12 @@ const Notes = () => {
     setNote('');
   };
 
-  const handleSaveEdit = () => {
-    if (heading.trim() !== '' && note.trim() !== '' && editingNote) {
-      const editedNote = {
-        ...editingNote,
-        heading: heading,
-        note: note,
-        editedTime: new Date().toLocaleString() // Add editedTime property
-      };
-      const updatedNotes = notes.map((n) =>
-        n.id === editingNote.id ? editedNote : n
-      );
-      setNotes(updatedNotes);
-      handleClose();
-    }
-  };
-
-  const handleDeleteNote = (id) => {
-    const updatedNotes = notes.filter((note) => note.id !== id);
-    setNotes(updatedNotes);
-  };
-
-  const user = {
-    name: 'Catherine Pike'
-  };
-
   return (
     <>
-      {/* For Change the title on web page */}
       <Helmet>
         <title>Notes</title>
       </Helmet>
 
-      {/* For display the main contain of the page  */}
       <PageTitleWrapper>
         <Grid container justifyContent="space-between" alignItems="center">
           <Grid item>
@@ -125,7 +119,7 @@ const Notes = () => {
               Notes
             </Typography>
             <Typography variant="subtitle2">
-              {user.name}, these are the list of the Notes
+              Catherine Pike, these are the list of the Notes
             </Typography>
           </Grid>
           <Grid item>
@@ -133,7 +127,7 @@ const Notes = () => {
               variant="contained"
               color="success"
               sx={{ margin: '0.6rem' }}
-              onClick={handleClickOpen}
+              onClick={() => setOpen(true)}
             >
               <AddTwoToneIcon
                 sx={{
@@ -142,14 +136,13 @@ const Notes = () => {
                   color: 'white',
                   marginRight: '5px'
                 }}
-              />{' '}
+              />
               Create Notes
             </Button>
           </Grid>
         </Grid>
       </PageTitleWrapper>
 
-      {/* Whn create new Notes this aper */}
       <Dialog
         open={open}
         onClose={handleClose}
@@ -174,7 +167,7 @@ const Notes = () => {
                 color: 'green',
                 marginRight: '5px'
               }}
-            />{' '}
+            />
             {editingNote ? 'Edit Note' : 'Create Notes'}
           </Typography>
         </DialogTitle>
@@ -216,27 +209,24 @@ const Notes = () => {
             sx={{ margin: '0.6rem' }}
             onClick={() => {
               if (editingNote) {
-                handleSaveEdit();
+                updateNote();
               } else {
-                handleCreateNote();
+                createNote();
               }
-              handleClose(); // Close the dialog after saving
             }}
           >
             {editingNote ? 'Save' : 'Submit'}
           </Button>
           <Button
-            // onClick={handleClose}
-            onClick={editingNote ? handleCancelEdit : handleClose}
+            onClick={handleClose}
             variant="contained"
             sx={{ margin: '1rem' }}
           >
-            {editingNote ? 'Cancel' : 'Cancel'}
+            Cancel
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* when we add enw notes one card aper */}
       <Container maxWidth="lg">
         {notes.length > 0 ? (
           <Grid
@@ -246,8 +236,8 @@ const Notes = () => {
             alignItems="stretch"
             spacing={3}
           >
-            {notes.map((note, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
+            {notes.map((note) => (
+              <Grid item xs={12} sm={6} md={4} key={note._id}>
                 <Card sx={{ maxWidth: '100%', height: '100%' }}>
                   <CardHeader
                     action={
@@ -259,11 +249,11 @@ const Notes = () => {
                         <EditIcon />
                       </IconButton>
                     }
-                    title={note.heading}
+                    title={note.title}
                   />
                   <CardContent>
                     <Typography variant="body2" color="black">
-                      {note.note}
+                      {note.description}
                     </Typography>
                   </CardContent>
                   <CardActions
@@ -281,7 +271,7 @@ const Notes = () => {
                     <IconButton
                       aria-label="delete"
                       color="error"
-                      onClick={() => handleDeleteNote(note.id)}
+                      onClick={() => handleDeleteNote(note._id)}
                     >
                       <DeleteIcon />
                     </IconButton>

@@ -8,8 +8,13 @@ import {
   faLinkedinIn
 } from '@fortawesome/free-brands-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { login, signUp } from 'src/service/auth.service';
+import { log } from 'console';
 
 function Overview() {
+  const axios = require('axios');
+
   const [isSignUpMode, setIsSignUpMode] = useState(false);
   const navigate = useNavigate();
 
@@ -25,13 +30,25 @@ function Overview() {
     event.preventDefault();
     navigate('/dashboards/Companies');
   };
+const handleSignupSubmit =async (event: React.FormEvent<HTMLFormElement>)=>{
+  event.preventDefault();
+  const formData = new FormData(event.currentTarget);
+  console.log(Object.fromEntries(formData.entries()));
+  const data = Object.fromEntries(formData.entries());
 
+  const payload = {
+    ...data
+  }
+  const res = await signUp(payload)
+ if(!res)
+ navigate('/dashboards/Companies');
+}
   return (
     <div className={`loginContainer ${isSignUpMode ? 'sign-up-mode' : ''}`}>
       <div className="forms-container">
         <div className="signin-signup">
           <form
-            onSubmit={onSubmit}
+            onSubmit={handleSignupSubmit}
             action="#"
             className="sign-in-form loginForm"
           >
@@ -42,6 +59,7 @@ function Overview() {
               <input
                 className="LoginInput"
                 type="text"
+                name='username'
                 placeholder="Username"
                 required
               />
@@ -51,6 +69,7 @@ function Overview() {
               <input
                 className="LoginInput"
                 type="email"
+                name='email'
                 placeholder="Email"
                 required
               />
@@ -60,6 +79,7 @@ function Overview() {
               <input
                 className="LoginInput"
                 type="password"
+                name='password'
                 placeholder="Password"
                 required
               />
@@ -91,7 +111,7 @@ function Overview() {
           <form
             action="#"
             className="sign-up-form loginForm"
-            onSubmit={onSubmit}
+            onSubmit={handleSignupSubmit}
           >
             <h2 className="title">Create New Account</h2>
             <div className="input-field">
@@ -100,6 +120,7 @@ function Overview() {
                 className="LoginInput"
                 type="text"
                 placeholder="Username"
+                name='username'
                 required
               />
             </div>
@@ -108,6 +129,7 @@ function Overview() {
               <input
                 className="LoginInput"
                 type="email"
+                name='email'
                 placeholder="Email"
                 required
               />
@@ -117,6 +139,7 @@ function Overview() {
               <input
                 className="LoginInput"
                 type="password"
+                name='password'
                 placeholder="Password"
                 required
               />

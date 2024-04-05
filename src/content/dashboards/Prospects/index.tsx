@@ -27,6 +27,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Footer from 'src/components/Footer';
 import EditIcon from '@mui/icons-material/Edit';
 import DataNotFound from 'src/content/pages/Status/DataNotFound';
+import axios from 'axios';
 
 const Prospects = () => {
   const [open, setOpen] = useState(false);
@@ -42,73 +43,56 @@ const Prospects = () => {
     status: ''
   });
 
-  const handleEditTable = (
-    data: React.SetStateAction<{
-      name: string;
-      email: string;
-      officeId: string;
-      companyId: string;
-      phoneNo: string;
-      status: string;
-    }>
-  ) => {
-    setData(data); // Set the data of the prospect to edit in the form fields
+  const handleEditTable = (data) => {
+    setData(data);
     setOpen(true);
-    setEditingTable(data); // Set the editingTable to the data being edited
+    setEditingTable(data);
 
-    // Check if the data being edited has been previously saved
     const editedIndex = submitData.findIndex((item) => item === data);
-    if (editedIndex !== 1) {
-      setEditIconColor('black'); // Set the color of the edit icon to black
+    if (editedIndex !== -1) {
+      setEditIconColor('black');
     } else {
-      setEditIconColor('green'); // Set the color of the edit icon to green
+      setEditIconColor('green');
     }
   };
 
   useEffect(() => {
-    // Load data from local storage when component mounts
     const storedData = localStorage.getItem('submitData');
     if (storedData) {
       setSubmitData(JSON.parse(storedData));
     }
   }, []);
 
-  const handleSubmit = () => {
-    // Check if any field is empty
-    const emptyFields = Object.values(data).filter(
-      (value) => value.trim() === ''
-    );
-    if (emptyFields.length > 0) {
-      alert('Please fill in all fields.');
-    } else {
-      const newData = { ...data };
-      // Update submitData state
-      setSubmitData((prevData) => [...prevData, newData]);
-      // Reset form data
-      setData({
-        name: '',
-        email: '',
-        officeId: '',
-        companyId: '',
-        phoneNo: '',
-        status: ''
-      });
+  // const handleDelete = (index) => {
+  //   const newData = submitData.filter((_, i) => i !== index);
+  //   setSubmitData(newData);
+  //   localStorage.setItem('submitData', JSON.stringify(newData));
+  // };
 
-      // Save submitData to local storage
-      localStorage.setItem(
-        'submitData',
-        JSON.stringify([...submitData, newData])
-      );
+  
+  const handleDelete = async (_id) => {
+
+    console.log("id",_id);
+    
+    try{
+      const response =await axios.delete(`http://localhost:3003/prospects/${_id}`)
+
+      console.log(response);
+      
+      if (response.status===201){
+        console.log("delet");
+        
+      }else{
+        console.log("error");
+        
+      }
+    }catch(error){
+      console.log(error);
+      
     }
   };
 
-  const handleDelete = (index: number) => {
-    const newData = submitData.filter((_, i) => i !== index);
-    setSubmitData(newData);
-    localStorage.setItem('submitData', JSON.stringify(newData));
-  };
-
-  const handleInputChange = (e: { target: { name: any; value: any } }) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
     setData((prevData) => ({
       ...prevData,
@@ -118,7 +102,7 @@ const Prospects = () => {
 
   const handleClickOpen = () => {
     setOpen(true);
-    setEditingTable(null); // Reset editingNote when opening the modal for creating a new Table
+    setEditingTable(null);
   };
 
   const handleClose = () => {
@@ -129,54 +113,38 @@ const Prospects = () => {
     setOpen(false);
   };
 
-  const handleSaveEdit = () => {
-    // Check if any field is empty
-    const emptyFields = Object.values(data).filter(
-      (value) => value.trim() === ''
-    );
-    if (emptyFields.length > 0) {
-      alert('Please fill in all fields.');
-    } else {
-      const newData = { ...data };
-      // Find the index of the editingTable in submitData
-      const editingIndex = submitData.findIndex(
-        (item) => item === editingTable
-      );
-      // Replace the previous data with the edited data
-      const updatedSubmitData = [...submitData];
-      updatedSubmitData[editingIndex] = newData;
-      // Update submitData state
-      setSubmitData(updatedSubmitData);
-      // Reset form data
-      setData({
-        name: '',
-        email: '',
-        officeId: '',
-        companyId: '',
-        phoneNo: '',
-        status: ''
-      });
-      // Save submitData to local storage
-      localStorage.setItem('submitData', JSON.stringify(updatedSubmitData));
-      // Close the dialog
-      setOpen(false);
+  const handleSubmit = async () => {
+    try {
+      const emptyFields = Object.values(data).filter((value) => value.trim() === '');
+      if (emptyFields.length > 0) {
+        alert('Please fill in all fields.');
+        return;
+      }
+      
+      const response = await axios.post('http://localhost:3003/prospects', data);
 
-      // Set the color of the edit icon to black after saving the edit
-      setEditIconColor('black');
+      console.log("response",response);
+      
+      
+      setSubmitData([...submitData, response.data]);
+      
+      
+      alert('Prospect submitted successfully!');
+    } catch (error) {
+      console.error('Error submitting prospect:', error);
     }
   };
 
   const user = {
     name: 'Catherine Pike'
   };
+
   return (
     <>
-      {/* For Change the title on web page */}
       <Helmet>
         <title>Prospects</title>
       </Helmet>
 
-      {/* For display the main contain of the page  */}
       <PageTitleWrapper>
         <Grid container justifyContent="space-between" alignItems="center">
           <Grid item>
@@ -208,7 +176,6 @@ const Prospects = () => {
         </Grid>
       </PageTitleWrapper>
 
-      {/* When creating new notes this appears */}
       <Dialog
         open={open}
         onClose={handleClose}
@@ -302,7 +269,7 @@ const Prospects = () => {
                   required
                   inputProps={{
                     inputMode: 'numeric',
-                    pattern: '[0-9]*' // Only allows numbers
+                    pattern: '[0-9]*'
                   }}
                 />
               </Grid>
@@ -328,12 +295,8 @@ const Prospects = () => {
             color="success"
             sx={{ margin: '0.6rem' }}
             onClick={() => {
-              if (editingTable) {
-                handleSaveEdit();
-              } else {
-                handleSubmit();
-              }
-              handleClose(); // Close the dialog after saving
+              handleSubmit();
+              handleClose();
             }}
           >
             {editingTable ? 'Save' : 'Submit'}
@@ -341,9 +304,9 @@ const Prospects = () => {
           <Button
             variant="contained"
             sx={{ margin: '1rem' }}
-            onClick={editingTable ? handleCancelEdit : handleClose}
+            onClick={handleCancelEdit}
           >
-            {editingTable ? 'Cancel' : 'Cancel'}
+            Cancel
           </Button>
         </DialogActions>
       </Dialog>
@@ -386,7 +349,7 @@ const Prospects = () => {
                           <IconButton
                             aria-label="delete"
                             color="error"
-                            onClick={() => handleDelete(index)}
+                            onClick={() => handleDelete(data._id)}
                           >
                             <DeleteIcon />
                           </IconButton>
