@@ -143,7 +143,7 @@ const ProfileCover = ({ user }) => {
             type="file"
           />
           <label htmlFor="icon-button-file">
-            <IconButton component="span" color="success">
+            <IconButton component="span" color="primary">
               <UploadTwoToneIcon />
             </IconButton>
           </label>

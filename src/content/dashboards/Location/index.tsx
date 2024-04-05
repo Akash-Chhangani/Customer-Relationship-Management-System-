@@ -281,6 +281,7 @@ const location = () => {
                       <IconButton
                         sx={{ marginRight: '0.5rem' }}
                         aria-label="edit"
+                        color="success"
                         onClick={() => handleEditNote(location)}
                       >
                         <EditIcon />
