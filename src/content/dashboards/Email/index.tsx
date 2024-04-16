@@ -25,7 +25,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import StatusComingSoon from 'src/content/pages/Status/ComingSoon';
 import DataNotFound from 'src/content/pages/Status/DataNotFound';
 
@@ -37,6 +36,11 @@ const Email = () => {
   const [editContent, setEditContent] = useState('');
   const [showComingSoon, setShowComingSoon] = useState(false); // State to control rendering of StatusComingSoon
   const [editingTemplate, setEditingTemplate] = useState(false); // State to track if editing a template
+  const [isClicked, setIsClicked] = useState(false);
+
+  const handleClickFavoriteIcon = () => {
+    setIsClicked(!isClicked);
+  };
 
   useEffect(() => {
     // Retrieve email templates data from local storage when component mounts
@@ -276,13 +280,6 @@ const Email = () => {
                       }}
                     >
                       {template.title}
-                      <IconButton
-                        sx={{ marginLeft: '0.5rem' }}
-                        aria-label="success"
-                        onClick={() => handleEditTemplate(index)}
-                      >
-                        <EditIcon sx={{ color: 'green' }} />
-                      </IconButton>
                     </Typography>
                     <Typography
                       variant="body1"
@@ -304,10 +301,18 @@ const Email = () => {
                       justifyContent: 'space-around'
                     }}
                   >
-                    <IconButton aria-label="add to favorites" color="primary">
-                      <VisibilityIcon />
+                    <IconButton
+                      sx={{ marginLeft: '0.5rem' }}
+                      aria-label="success"
+                      onClick={() => handleEditTemplate(index)}
+                    >
+                      <EditIcon sx={{ color: 'green' }} />
                     </IconButton>
-                    <IconButton aria-label="add to favorites">
+                    <IconButton
+                      aria-label="add to favorites"
+                      onClick={handleClickFavoriteIcon}
+                      style={{ color: isClicked ? 'red' : 'inherit' }}
+                    >
                       <FavoriteIcon />
                     </IconButton>
 

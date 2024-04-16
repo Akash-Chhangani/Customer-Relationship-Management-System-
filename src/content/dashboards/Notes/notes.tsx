@@ -46,17 +46,24 @@ const Notes = () => {
   }, [notes]);
 
   const handleCreateNote = () => {
-    if (heading.trim() !== '' && note.trim() !== '') {
-      const newNote = {
-        id: Date.now(), // Unique id generated using Date.now()
-        heading: heading,
-        note: note,
-        createdTime: new Date().toLocaleString()
-      };
-      setNotes([...notes, newNote]);
-      setHeading('');
-      setNote('');
+    if (heading.trim() === '') {
+      alert('Please fill in the title field');
+      return;
     }
+    if (note.trim() === '') {
+      alert('Please fill in the note description field');
+      return;
+    }
+
+    const newNote = {
+      id: Date.now(),
+      heading: heading,
+      note: note,
+      createdTime: new Date().toLocaleString()
+    };
+    setNotes([...notes, newNote]);
+    setHeading('');
+    setNote('');
   };
 
   const handleClickOpen = () => {
@@ -86,22 +93,33 @@ const Notes = () => {
   };
 
   const handleSaveEdit = () => {
-    if (heading.trim() !== '' && note.trim() !== '' && editingNote) {
-      const editedNote = {
-        ...editingNote,
-        heading: heading,
-        note: note,
-        editedTime: new Date().toLocaleString() // Add editedTime property
-      };
-      const updatedNotes = notes.map((n) =>
-        n.id === editingNote.id ? editedNote : n
-      );
-      setNotes(updatedNotes);
-      handleClose();
+    if (heading.trim() === '') {
+      alert('Please fill in the title field');
+      return;
     }
+    if (note.trim() === '') {
+      alert('Please fill in the note description field');
+      return;
+    }
+    if (!editingNote) {
+      alert('No note selected for editing');
+      return;
+    }
+
+    const editedNote = {
+      ...editingNote,
+      heading: heading,
+      note: note,
+      editedTime: new Date().toLocaleString()
+    };
+    const updatedNotes = notes.map((n) =>
+      n.id === editingNote.id ? editedNote : n
+    );
+    setNotes(updatedNotes);
+    handleClose();
   };
 
-  const handleDeleteNote = (id) => {
+  const handleDeleteNote = (id: any) => {
     const updatedNotes = notes.filter((note) => note.id !== id);
     setNotes(updatedNotes);
   };
@@ -112,12 +130,10 @@ const Notes = () => {
 
   return (
     <>
-      {/* For Change the title on web page */}
       <Helmet>
         <title>Notes</title>
       </Helmet>
 
-      {/* For display the main contain of the page  */}
       <PageTitleWrapper>
         <Grid container justifyContent="space-between" alignItems="center">
           <Grid item>
@@ -149,7 +165,6 @@ const Notes = () => {
         </Grid>
       </PageTitleWrapper>
 
-      {/* Whn create new Notes this aper */}
       <Dialog
         open={open}
         onClose={handleClose}
@@ -236,7 +251,6 @@ const Notes = () => {
         </DialogActions>
       </Dialog>
 
-      {/* when we add enw notes one card aper */}
       <Container maxWidth="lg">
         {notes.length > 0 ? (
           <Grid
@@ -255,6 +269,7 @@ const Notes = () => {
                         sx={{ marginRight: '0.5rem' }}
                         aria-label="edit"
                         onClick={() => handleEditNote(note)}
+                        color="success"
                       >
                         <EditIcon />
                       </IconButton>

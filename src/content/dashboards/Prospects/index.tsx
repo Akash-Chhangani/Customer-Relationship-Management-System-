@@ -32,7 +32,6 @@ const Prospects = () => {
   const [open, setOpen] = useState(false);
   const [submitData, setSubmitData] = useState([]);
   const [editingTable, setEditingTable] = useState(null);
-  const [editIconColor, setEditIconColor] = useState('green');
   const [data, setData] = useState({
     name: '',
     email: '',
@@ -55,14 +54,6 @@ const Prospects = () => {
     setData(data); // Set the data of the prospect to edit in the form fields
     setOpen(true);
     setEditingTable(data); // Set the editingTable to the data being edited
-
-    // Check if the data being edited has been previously saved
-    const editedIndex = submitData.findIndex((item) => item === data);
-    if (editedIndex !== 1) {
-      setEditIconColor('black'); // Set the color of the edit icon to black
-    } else {
-      setEditIconColor('green'); // Set the color of the edit icon to green
-    }
   };
 
   useEffect(() => {
@@ -145,6 +136,7 @@ const Prospects = () => {
       // Replace the previous data with the edited data
       const updatedSubmitData = [...submitData];
       updatedSubmitData[editingIndex] = newData;
+
       // Update submitData state
       setSubmitData(updatedSubmitData);
       // Reset form data
@@ -160,9 +152,6 @@ const Prospects = () => {
       localStorage.setItem('submitData', JSON.stringify(updatedSubmitData));
       // Close the dialog
       setOpen(false);
-
-      // Set the color of the edit icon to black after saving the edit
-      setEditIconColor('black');
     }
   };
 
@@ -171,12 +160,10 @@ const Prospects = () => {
   };
   return (
     <>
-      {/* For Change the title on web page */}
       <Helmet>
         <title>Prospects</title>
       </Helmet>
 
-      {/* For display the main contain of the page  */}
       <PageTitleWrapper>
         <Grid container justifyContent="space-between" alignItems="center">
           <Grid item>
@@ -208,7 +195,6 @@ const Prospects = () => {
         </Grid>
       </PageTitleWrapper>
 
-      {/* When creating new notes this appears */}
       <Dialog
         open={open}
         onClose={handleClose}
@@ -240,7 +226,7 @@ const Prospects = () => {
 
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            <Grid container spacing={2} justifyContent="center">
+            <Grid container justifyContent="center">
               <Grid item xs={12}>
                 <TextField
                   sx={{ marginTop: '1rem' }}
@@ -390,8 +376,11 @@ const Prospects = () => {
                           >
                             <DeleteIcon />
                           </IconButton>
-                          <IconButton onClick={() => handleEditTable(data)}>
-                            <EditIcon sx={{ color: editIconColor }} />
+                          <IconButton
+                            onClick={() => handleEditTable(data)}
+                            color="success"
+                          >
+                            <EditIcon />
                           </IconButton>
                         </TableCell>
                       </TableRow>

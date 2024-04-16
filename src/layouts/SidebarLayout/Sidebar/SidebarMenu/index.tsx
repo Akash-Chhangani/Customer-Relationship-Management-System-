@@ -190,7 +190,7 @@ function SidebarMenu() {
   return (
     <>
       <MenuWrapper>
-        <List component="div">
+        {/* <List component="div">
           <SubMenuWrapper>
             <List component="div">
               <ListItem component="div">
@@ -206,7 +206,7 @@ function SidebarMenu() {
               </ListItem>
             </List>
           </SubMenuWrapper>
-        </List>
+        </List> */}
         <List
           component="div"
           subheader={
@@ -365,7 +365,7 @@ function SidebarMenu() {
             </ListSubheader>
           }
         >
-          <SubMenuWrapper>
+          {/* <SubMenuWrapper>
             <List component="div">
               <ListItem component="div">
                 <Button
@@ -467,7 +467,7 @@ function SidebarMenu() {
                 </Button>
               </ListItem>
             </List>
-          </SubMenuWrapper>
+          </SubMenuWrapper> */}
         </List>
         <List
           component="div"

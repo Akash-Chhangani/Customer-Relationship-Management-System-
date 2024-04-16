@@ -61,18 +61,21 @@ const location = () => {
     localStorage.setItem('locations', JSON.stringify(locations));
   }, [locations]);
 
-  const handleCreateNote = () => {
-    if (country.trim() !== '' && locationDescription.trim() !== '') {
-      const newNote = {
-        id: Date.now(), // Unique id generated using Date.now()
-        country: country,
-        locationDescription: locationDescription,
-        createdTime: new Date().toLocaleString()
-      };
-      setLocations([...locations, newNote]);
-      setCountry('');
-      setLocationDescription('');
+  const handleCreateLocation = () => {
+    if (country.trim() === '' || locationDescription.trim() === '') {
+      alert('Please fill in all fields');
+      return;
     }
+
+    const newLocation = {
+      id: Date.now(), // Unique id generated using Date.now()
+      country: country,
+      locationDescription: locationDescription,
+      createdTime: new Date().toLocaleString()
+    };
+    setLocations([...locations, newLocation]);
+    setCountry('');
+    setLocationDescription('');
   };
 
   const handleClickOpen = () => {
@@ -100,22 +103,25 @@ const location = () => {
 
   const handleSaveEdit = () => {
     if (
-      country.trim() !== '' &&
-      locationDescription.trim() !== '' &&
-      editingLocation
+      country.trim() === '' ||
+      locationDescription.trim() === '' ||
+      !editingLocation
     ) {
-      const editedNote = {
-        ...editingLocation,
-        country: country,
-        locationDescription: locationDescription,
-        editedTime: new Date().toLocaleString() // Add editedTime property
-      };
-      const updatedNotes = locations.map((n) =>
-        n.id === editingLocation.id ? editedNote : n
-      );
-      setLocations(updatedNotes);
-      handleClose();
+      alert('Please fill in all fields');
+      return;
     }
+
+    const editedNote = {
+      ...editingLocation,
+      country: country,
+      locationDescription: locationDescription,
+      editedTime: new Date().toLocaleString() // Add editedTime property
+    };
+    const updatedNotes = locations.map((n) =>
+      n.id === editingLocation.id ? editedNote : n
+    );
+    setLocations(updatedNotes);
+    handleClose();
   };
 
   const handleDeleteNote = (id) => {
@@ -245,7 +251,7 @@ const location = () => {
               if (editingLocation) {
                 handleSaveEdit();
               } else {
-                handleCreateNote();
+                handleCreateLocation();
               }
               handleClose(); // Close the dialog after saving
             }}

@@ -32,7 +32,6 @@ const company = () => {
   const [open, setOpen] = useState(false);
   const [submitClientData, setSubmitClientData] = useState([]);
   const [editingClientTable, setEditingClientTable] = useState(null);
-  const [editIconColor, setEditIconColor] = useState('green');
   const [formData, setFormData] = useState({
     companyName: '',
     address: '',
@@ -59,13 +58,6 @@ const company = () => {
     setFormData(formData);
     setOpen(true);
     setEditingClientTable(formData);
-
-    const editedIndex = submitClientData.findIndex((item) => item === formData);
-    if (editedIndex !== -1) {
-      setEditIconColor('black');
-    } else {
-      setEditIconColor('green');
-    }
   };
 
   const handleSaveEdit = () => {
@@ -96,8 +88,6 @@ const company = () => {
         'submitClientData',
         JSON.stringify(updatedSubmitData)
       );
-      setOpen(false);
-      setEditIconColor('black');
     }
   };
 
@@ -426,8 +416,11 @@ const company = () => {
                           >
                             <DeleteIcon />
                           </IconButton>
-                          <IconButton onClick={() => handleEditTable(formData)}>
-                            <EditIcon sx={{ color: editIconColor }} />
+                          <IconButton
+                            color="success"
+                            onClick={() => handleEditTable(formData)}
+                          >
+                            <EditIcon />
                           </IconButton>
                         </TableCell>
                       </TableRow>
